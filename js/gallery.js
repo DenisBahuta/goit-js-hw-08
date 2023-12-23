@@ -64,14 +64,16 @@ const images = [
   },
 ];
 
-const gallImg = createGallImg(images);
-const gallery = document.querySelector(".gallery");
-gallery.insertAdjacentHTML("beforeend", gallImg);
-gallery.addEventListener("click", selectorImage);
+const galleryImage =  createGalleryMarkup(images);
+const gallery = document.querySelector('.gallery');
+gallery.innerHTML = galleryImage;
+gallery.addEventListener('click', selectorImage);
 
 function selectorImage(event) {
   event.preventDefault();
-  if (event.target === event.currentTarget) {
+  event.stopPropagation();
+
+  if (!event.target.classList.contains('gallery-image')) {
     return;
   }
   const original = event.target.dataset.source;
@@ -98,23 +100,24 @@ function selectorImage(event) {
 
 function onModalClose(event) {
   if (event.code === "Escape") {
-    basicLightbox.close();
+    instance.close();
   }
 }
 
-function createGallImg(images) {
+function  createGalleryMarkup(images) {
   return images
     .map(({ preview, original, description }) => 
-      `<li class="gallery-item">
-        <a class="gallery-link" href="${original}">
+      `<li class='gallery-item'>
+        <a class='gallery-link' href='${original}'>
           <img
-            class="gallery-image"
-            src="${preview}"
-            data-source="${original}"
-            alt="${description}"
+            class='gallery-image'
+            src='${preview}'
+            data-source='${original}'
+            alt='${description}'
           />
         </a>
       </li>`
     )
     .join("");
 }
+
