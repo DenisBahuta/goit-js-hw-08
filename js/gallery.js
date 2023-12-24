@@ -71,17 +71,15 @@ gallery.addEventListener('click', selectorImage);
 
 function selectorImage(event) {
   event.preventDefault();
-  event.stopPropagation();
-
-  if (!event.target.classList.contains('gallery-image')) {
-    return;
-  }
+  if (event.target === event.currentTarget) {
+      return;
+    }
   const original = event.target.dataset.source;
   const description = event.target.alt;
   const instance = basicLightbox.create(   
-      `<div class = 'modal'>
-        <a class='gallery-link' href = '${original}'>
-          <img class='gallery-image' src = '${original}' alt = '${description}' />
+      `<div class = 'modal-content'>
+        <a class='modal-link' href = '${original}'>
+          <img class='modal-image' src = '${original}' alt = '${description}' />
         </a>
       </div>`,
     {
@@ -96,11 +94,11 @@ function selectorImage(event) {
   instance.show();
 }
 
-function onModalClose(event) {
-  if (event.code === 'Escape') {
-    instance.close();
+instance.element().addEventListener('click', event => {
+  if (event.target.classList.contains('modal-content')) {
+    onModalClose();
   }
-}
+});
 
 function  createGalleryMarkup(images) {
   return images
