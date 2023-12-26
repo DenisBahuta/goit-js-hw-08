@@ -72,21 +72,17 @@ gallery.addEventListener('click', selectorImage);
 function selectorImage(event) {
   event.preventDefault();
 
-  if (event.target === event.currentTarget) {
+  if (!event.target.classList.contains('gallery-image')) {
     return;
   }
   const original = event.target.dataset.source;
   const description = event.target.alt;
-  const onModalClose = () => {
-    instance.close();
-  };
-  
-  const instance = basicLightbox.create(   
-    <div class='modal-content'>
-      <a class='modal-link' href='${original}'>
-        <img class='modal-image' src='${original}' alt='${description}' />
-      </a>
-    </div>,
+  const instance = basicLightbox.create(
+    `<div class = 'modal'>
+        <a class='modal-link' href= '${original}'>
+          <img class='modal-image' src= '${original}' alt= '${description}' />
+        </a>
+      </div>`,
     {
       onShow: () => {
         document.addEventListener('keydown', onModalClose);
@@ -96,29 +92,30 @@ function selectorImage(event) {
       },
     }
   );
-  
   instance.show();
-  
-  instance.element().addEventListener('click', event => {
-    if (event.target.classList.contains('modal-content')) {
-      onModalClose();
-    }
-  });
 
-function  createGalleryMarkup(images) {
+  function onModalClose(event) {
+    if (event.code === 'Escape') {
+      document.removeEventListener('keydown', onModalClose);
+      instance.close();
+    }
+  }
+}
+
+function createGalleryMarkup(images) {
   return images
-    .map(({ preview, original, description }) => 
-      `<li class= 'gallery-item'>
-        <a class= 'gallery-link' href= '${original}'>
+    .map(
+      ({ preview, original, description }) =>
+        `<li class = 'gallery-item'>
+        <a class = 'gallery-link' href = '${original}'>
           <img
-            class= 'gallery-image'
-            src= '${preview}'
-            data-source= '${original}'
-            alt= '${description}'
+            class = 'gallery-image'
+            src = '${preview}'
+            data-source = '${original}'
+            alt = '${description}'
           />
         </a>
       </li>`
     )
     .join('');
-}
 }
